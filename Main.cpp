@@ -9,22 +9,29 @@ int main()
 	ofs << firstTree;
 	ofs.close();
 
-	BinarySearchTree<int> secondTree;
-	std::cin >> secondTree;
+	BinarySearchTree<double> secondTree;
 
-	if (secondTree.insert(7))
-		std::cout << secondTree << std::endl;
+	std::ifstream ifs("BinTree.txt");
+	ifs >> secondTree;
+	ifs.close();
+
+	std::cout << secondTree << std::endl;
+
+	BinarySearchTree<int> thirdTree;
+	std::cin >> thirdTree;
+
+	if (thirdTree.insert(7))
+		std::cout << thirdTree << std::endl;
 	else
-		std::cin >> secondTree;
+		std::cin >> thirdTree;
 
 	auto w = 5;
-	auto found = secondTree.find(w);
+	auto found = thirdTree.find(w);
 
 	if (found)
 		std::cout << *found << std::endl;
 	else
 		std::cout << w << " has not been found\n";
 
-	system("pause");
 	return 0;
 }

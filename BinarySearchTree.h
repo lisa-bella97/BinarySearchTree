@@ -11,7 +11,7 @@ public:
 	BinarySearchTree();
 	BinarySearchTree(const std::initializer_list<T> & list);
 	~BinarySearchTree();
-	auto size() const noexcept -> size_t;
+	auto size() const noexcept->size_t;
 	auto insert(const T & value) noexcept -> bool;
 	auto find(const T & value) const noexcept -> const T *;
 
@@ -32,12 +32,26 @@ public:
 		size_t size;
 		std::cout << "Enter the number of added elements: ";
 		in >> size;
-		int counter = 0;
 		T value;
 
 		for (auto i = 0; i < size; i++)
 		{
 			std::cout << i + 1 << ">>";
+			in >> value;
+			tree.insert(value);
+		}
+
+		return in;
+	}
+
+	friend std::ifstream & operator >> (std::ifstream & in, BinarySearchTree<T> & tree)
+	{
+		size_t size;
+		in >> size;
+		T value;
+
+		for (auto i = 0; i < size; i++)
+		{
 			in >> value;
 			tree.insert(value);
 		}
@@ -51,9 +65,9 @@ private:
 		Node(T value) : value_(value), left_(nullptr), right_(nullptr) {}
 		~Node()
 		{
-			if (left_) 
+			if (left_)
 				delete left_;
-			if (right_) 
+			if (right_)
 				delete right_;
 		}
 
@@ -113,7 +127,7 @@ auto BinarySearchTree<T>::insert(const T & value) noexcept -> bool
 		return true;
 	}
 
-	Node * node = root_, * parent = nullptr;
+	Node * node = root_, *parent = nullptr;
 
 	while (node)
 	{
@@ -140,17 +154,17 @@ auto BinarySearchTree<T>::find(const T & value) const noexcept -> const T *
 {
 	Node * node = root_;
 
-	while (node)
-	{
-		if (value < node->value_)
-			node = node->left_;
-		else if (value > node->value_)
-			node = node->right_;
-		else
-			return &node->value_;
-	}
+while (node)
+{
+	if (value < node->value_)
+		node = node->left_;
+	else if (value > node->value_)
+		node = node->right_;
+	else
+		return &node->value_;
+}
 
-	return nullptr;
+return nullptr;
 }
 
 template<typename T>
