@@ -5,13 +5,13 @@ int main()
 	BinarySearchTree<char> firstTree{ 'a', 'b', 'z', 'g' };
 	std::cout << firstTree << std::endl;
 
-	std::ofstream ofs("Tree.txt");
+	std::ofstream ofs("D:\\Tree.txt");
 	ofs << firstTree;
 	ofs.close();
 
 	BinarySearchTree<double> secondTree;
 
-	std::ifstream ifs("BinTree.txt");
+	std::ifstream ifs("D:\\BinTree.txt");
 	ifs >> secondTree;
 	ifs.close();
 
@@ -31,7 +31,7 @@ int main()
 	if (found)
 		std::cout << *found << std::endl;
 	else
-		std::cout << w << " has not been found\n";
+		std::cout << w << " has not been found" << std::endl;
 
 	return 0;
 }

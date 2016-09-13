@@ -1,5 +1,5 @@
-#ifndef _BINARYSEARCHTREE_H_
-#define _BINARYSEARCHTREE_H_
+#ifndef BINARYSEARCHTREE_BINARYSEARCHTREE_H
+#define BINARYSEARCHTREE_BINARYSEARCHTREE_H
 
 #include <iostream>
 #include <fstream>
@@ -11,11 +11,23 @@ public:
 	BinarySearchTree();
 	BinarySearchTree(const std::initializer_list<T> & list);
 	~BinarySearchTree();
-	auto size() const noexcept->size_t;
+	auto size() const noexcept -> size_t;
 	auto insert(const T & value) noexcept -> bool;
 	auto find(const T & value) const noexcept -> const T *;
 
 	friend std::ostream & operator << (std::ostream & out, const BinarySearchTree<T> & tree)
+	{
+		out << "Direct:\n";
+		tree.direct(tree.root_, out);
+		out << "\nReverse:\n";
+		tree.reverse(tree.root_, out);
+		out << "\nSymmetric:\n";
+		tree.symmetric(tree.root_, out);
+
+		return out;
+	}
+
+	friend std::ofstream & operator << (std::ofstream & out, const BinarySearchTree<T> & tree)
 	{
 		out << "Direct:\n";
 		tree.direct(tree.root_, out);
@@ -46,7 +58,7 @@ public:
 
 	friend std::ifstream & operator >> (std::ifstream & in, BinarySearchTree<T> & tree)
 	{
-		size_t size;
+		size_t size = 0;
 		in >> size;
 		T value;
 
@@ -94,6 +106,9 @@ BinarySearchTree<T>::BinarySearchTree()
 template<typename T>
 BinarySearchTree<T>::BinarySearchTree(const std::initializer_list<T>& list)
 {
+	root_ = nullptr;
+	size_ = 0;
+
 	for (auto elem : list)
 		insert(elem);
 }
@@ -200,4 +215,4 @@ void BinarySearchTree<T>::symmetric(Node * node, std::ostream & out) const
 	symmetric(node->right_, out);
 }
 
-#endif // !_BINARYSEARCHTREE_H_
+#endif //BINARYSEARCHTREE_BINARYSEARCHTREE_H
