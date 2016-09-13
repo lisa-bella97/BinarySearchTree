@@ -11,7 +11,7 @@ public:
 	BinarySearchTree();
 	BinarySearchTree(const std::initializer_list<T> & list);
 	~BinarySearchTree();
-	auto size() const noexcept->size_t;
+	auto size() const noexcept -> size_t;
 	auto insert(const T & value) noexcept -> bool;
 	auto find(const T & value) const noexcept -> const T *;
 
@@ -46,7 +46,7 @@ public:
 
 	friend std::ifstream & operator >> (std::ifstream & in, BinarySearchTree<T> & tree)
 	{
-		size_t size = 0;
+		size_t size;
 		in >> size;
 		T value;
 
