@@ -11,23 +11,11 @@ public:
 	BinarySearchTree();
 	BinarySearchTree(const std::initializer_list<T> & list);
 	~BinarySearchTree();
-	auto size() const noexcept -> size_t;
+	auto size() const noexcept->size_t;
 	auto insert(const T & value) noexcept -> bool;
 	auto find(const T & value) const noexcept -> const T *;
 
 	friend std::ostream & operator << (std::ostream & out, const BinarySearchTree<T> & tree)
-	{
-		out << "Direct:\n";
-		tree.direct(tree.root_, out);
-		out << "\nReverse:\n";
-		tree.reverse(tree.root_, out);
-		out << "\nSymmetric:\n";
-		tree.symmetric(tree.root_, out);
-
-		return out;
-	}
-
-	friend std::ofstream & operator << (std::ofstream & out, const BinarySearchTree<T> & tree)
 	{
 		out << "Direct:\n";
 		tree.direct(tree.root_, out);
