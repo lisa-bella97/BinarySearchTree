@@ -15,23 +15,32 @@ int main()
 	ifs >> secondTree;
 	ifs.close();
 
-	std::cout << secondTree << std::endl;
+	if (secondTree.insert(7.2))
+		std::cout << secondTree << std::endl;
 
-	BinarySearchTree<int> thirdTree;
-	std::cin >> thirdTree;
-
-	if (thirdTree.insert(7))
-		std::cout << thirdTree << std::endl;
-	else
-		std::cin >> thirdTree;
-
-	auto w = 5;
-	auto found = thirdTree.find(w);
+	auto w = 5.0;
+	auto found = secondTree.find(w);
 
 	if (found)
 		std::cout << *found << std::endl;
 	else
 		std::cout << w << " has not been found" << std::endl;
+
+    BinarySearchTree<char> thirdTree(firstTree);
+    std::cout << thirdTree << std::endl;
+
+    BinarySearchTree<double> fourthTree(std::move(secondTree));
+    std::cout << fourthTree << std::endl;
+    std::cout << secondTree << std::endl;
+
+    if (secondTree == fourthTree)
+        std::cout << "secondTree is equal to fourthTree" << std::endl;
+
+    BinarySearchTree<char> fifthTree;
+    std::cin >> fifthTree;
+
+    if (firstTree == fifthTree)
+        std::cout << "firstTree is equal to fifthTree" << std::endl;
 
 	return 0;
 }

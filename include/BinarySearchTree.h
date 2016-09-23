@@ -7,48 +7,49 @@
 
 #include <iostream>
 #include <fstream>
+#include <limits>
+
+template <typename T>
+class BinarySearchTree;
+
+template <typename T> auto operator >> (std::istream& in, BinarySearchTree<T>& tree) -> std::istream&;
+template <typename T> auto operator << (std::ostream& out, const BinarySearchTree<T>& tree) -> std::ostream&;
+template <typename T> auto operator >> (std::ifstream& in, BinarySearchTree<T>& tree) -> std::ifstream&;
+template <typename T> auto operator << (std::ofstream& out, const BinarySearchTree<T>& tree) -> std::ofstream&;
 
 template <typename T>
 class BinarySearchTree
 {
 public:
     BinarySearchTree();
-    BinarySearchTree(const std::initializer_list<T> & list);
+    BinarySearchTree(const std::initializer_list<T>& list);
+    BinarySearchTree(const BinarySearchTree& tree);
+    BinarySearchTree(BinarySearchTree&& tree);
     ~BinarySearchTree();
+
     auto size() const noexcept -> size_t;
-    auto insert(const T & value) noexcept -> bool;
-    auto find(const T & value) const noexcept -> const T *;
+    auto insert(const T& value) noexcept -> bool;
+    auto find(const T& value) const noexcept -> const T*;
 
-    friend std::ostream & operator << (std::ostream & out, const BinarySearchTree<T> & tree)
-    {
-        out << "Direct:\n";
-        tree.direct(tree.root_, out);
-        out << "\nReverse:\n";
-        tree.reverse(tree.root_, out);
-        out << "\nSymmetric:\n";
-        tree.symmetric(tree.root_, out);
+    auto operator = (const BinarySearchTree& tree) -> BinarySearchTree&;
+    auto operator = (BinarySearchTree&& tree) -> BinarySearchTree&;
+    auto operator == (const BinarySearchTree& tree) -> bool;
 
-        return out;
-    }
-
-    friend std::istream & operator >> (std::istream & in, BinarySearchTree<T> & tree)
-    {
-        T value;
-
-        while (in >> value)
-            tree.insert(value);
-
-        return in;
-    }
+    friend auto operator >> <> (std::istream& in, BinarySearchTree<T>& tree) -> std::istream&;
+    friend auto operator << <> (std::ostream& out, const BinarySearchTree<T>& tree) -> std::ostream&;
+    friend auto operator >> <> (std::ifstream& in, BinarySearchTree<T>& tree) -> std::ifstream&;
+    friend auto operator << <> (std::ofstream& out, const BinarySearchTree<T>& tree) -> std::ofstream&;
 
 private:
     struct Node
     {
         Node(T value) : value_(value), left_(nullptr), right_(nullptr) {}
+
         ~Node()
         {
             if (left_)
                 delete left_;
+
             if (right_)
                 delete right_;
         }
@@ -61,9 +62,11 @@ private:
     Node * root_;
     size_t size_;
 
-    void direct(Node* root, std::ostream & out) const;
-    void reverse(Node* root, std::ostream & out) const;
-    void symmetric(Node* root, std::ostream & out) const;
+    void direct(Node * root, std::ostream & out) const;
+    void reverse(Node * root, std::ostream & out) const;
+    void symmetric(Node * root, std::ostream & out) const;
+    auto copyTree(Node * node) -> Node *;
+    auto equal(Node *firstNode, Node *secondTree) const -> bool;
 };
 
 template<typename T>
@@ -76,8 +79,23 @@ BinarySearchTree<T>::BinarySearchTree()
 template<typename T>
 BinarySearchTree<T>::BinarySearchTree(const std::initializer_list<T>& list) : BinarySearchTree()
 {
-    for (auto elem : list)
+    for (auto & elem : list)
         insert(elem);
+}
+
+template<typename T>
+BinarySearchTree<T>::BinarySearchTree(const BinarySearchTree<T>& tree) : size_(tree.size_)
+{
+    root_ = copyTree(tree.root_);
+}
+
+template<typename T>
+BinarySearchTree<T>::BinarySearchTree(BinarySearchTree<T>&& tree)
+{
+    size_ = tree.size_;
+    root_ = tree.root_;
+    tree.root_ = nullptr;
+    tree.size_ = 0;
 }
 
 template<typename T>
@@ -97,7 +115,7 @@ auto BinarySearchTree<T>::size() const noexcept -> size_t
 }
 
 template<typename T>
-auto BinarySearchTree<T>::insert(const T & value) noexcept -> bool
+auto BinarySearchTree<T>::insert(const T& value) noexcept -> bool
 {
     if (root_ == nullptr)
     {
@@ -106,7 +124,7 @@ auto BinarySearchTree<T>::insert(const T & value) noexcept -> bool
         return true;
     }
 
-    Node * node = root_, *parent = nullptr;
+    Node * node = root_, * parent = nullptr;
 
     while (node)
     {
@@ -131,7 +149,7 @@ auto BinarySearchTree<T>::insert(const T & value) noexcept -> bool
 }
 
 template<typename T>
-auto BinarySearchTree<T>::find(const T & value) const noexcept -> const T *
+auto BinarySearchTree<T>::find(const T& value) const noexcept -> const T*
 {
     Node * node = root_;
 
@@ -146,6 +164,100 @@ auto BinarySearchTree<T>::find(const T & value) const noexcept -> const T *
     }
 
     return nullptr;
+}
+
+template<typename T>
+auto BinarySearchTree<T>::operator = (const BinarySearchTree<T>& tree) -> BinarySearchTree<T>&
+{
+    if (this == &tree)
+        return *this;
+
+    delete root_;
+    root_ = copyTree(tree.root_);
+    size_ = tree.size_;
+
+    return *this;
+}
+
+template<typename T>
+auto BinarySearchTree<T>::operator = (BinarySearchTree<T>&& tree) -> BinarySearchTree<T>&
+{
+    if (this == &tree)
+        return *this;
+
+    delete root_;
+    size_ = tree.size_;
+    root_ = tree.root_;
+    tree.root_ = nullptr;
+    tree.size_ = 0;
+
+    return *this;
+}
+
+template<typename T>
+auto BinarySearchTree<T>::operator == (const BinarySearchTree<T>& tree) -> bool
+{
+    if (this == &tree)
+        return true;
+
+    return equal(root_, tree.root_);
+}
+
+template<typename T>
+auto operator >> (std::istream& in, BinarySearchTree<T>& tree) -> std::istream&
+{
+    if (tree.root_)
+        delete tree.root_;
+
+    size_t size;
+    std::cout << "size = ";
+    in >> size;
+    T value;
+
+    for (auto i = 0; i < size; i++)
+    {
+        do
+        {
+            in.clear();
+            in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << i + 1 << ">>";
+        }
+        while (!(in >> value));
+
+        tree.insert(value);
+    }
+
+    return in;
+}
+
+template<typename T>
+auto operator << (std::ostream& out, const BinarySearchTree<T>& tree) -> std::ostream&
+{
+    tree.symmetric(tree.root_, out);
+
+    return out;
+}
+
+template<typename T>
+auto operator >> (std::ifstream& in, BinarySearchTree<T>& tree) -> std::ifstream&
+{
+    if (tree.root_)
+        delete tree.root_;
+
+    T value;
+
+    while (in >> value)
+        tree.insert(value);
+
+    return in;
+}
+
+template<typename T>
+auto operator << (std::ofstream& out, const BinarySearchTree<T>& tree) -> std::ofstream&
+{
+    tree.direct(tree.root_, out);
+
+    return out;
 }
 
 template<typename T>
@@ -179,6 +291,35 @@ void BinarySearchTree<T>::symmetric(Node * node, std::ostream & out) const
     symmetric(node->left_, out);
     out << node->value_ << "  ";
     symmetric(node->right_, out);
+}
+
+template<typename T>
+auto BinarySearchTree<T>::copyTree(Node * node) -> Node *
+{
+    auto newNode = new Node(node->value_);
+
+    if (node->left_)
+        newNode->left_ = copyTree(node->left_);
+
+    if (node->right_)
+        newNode->right_ = copyTree(node->right_);
+
+    return newNode;
+}
+
+template<typename T>
+auto BinarySearchTree<T>::equal(Node *firstNode, Node *secondNode) const -> bool
+{
+    if (firstNode)
+    {
+        if (secondNode && firstNode->value_ == secondNode->value_
+            && equal(firstNode->left_, secondNode->left_) && equal(firstNode->right_, secondNode->right_))
+            return true;
+    }
+    else if (!secondNode)
+        return true;
+
+    return false;
 }
 
 #endif //BINARYSEARCHTREE_BINARYSEARCHTREE_H
