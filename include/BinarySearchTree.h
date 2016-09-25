@@ -54,6 +54,19 @@ private:
                 delete right_;
         }
 
+        auto copy() -> Node *
+        {
+            auto newNode = new Node(value_);
+
+            if (left_)
+                newNode->left_ = left_->copy();
+
+            if (right_)
+                newNode->right_ = right_->copy();
+
+            return newNode;
+        }
+
         T value_;
         Node * left_;
         Node * right_;
@@ -65,7 +78,6 @@ private:
     void direct(Node * root, std::ostream & out) const;
     void reverse(Node * root, std::ostream & out) const;
     void symmetric(Node * root, std::ostream & out) const;
-    auto copyTree(Node * node) -> Node *;
     auto equal(Node *firstNode, Node *secondTree) const -> bool;
 };
 
@@ -86,7 +98,7 @@ BinarySearchTree<T>::BinarySearchTree(const std::initializer_list<T>& list) : Bi
 template<typename T>
 BinarySearchTree<T>::BinarySearchTree(const BinarySearchTree<T>& tree) : size_(tree.size_)
 {
-    root_ = copyTree(tree.root_);
+    root_ = tree.root_->copy();
 }
 
 template<typename T>
@@ -173,7 +185,7 @@ auto BinarySearchTree<T>::operator = (const BinarySearchTree<T>& tree) -> Binary
         return *this;
 
     delete root_;
-    root_ = copyTree(tree.root_);
+    root_ = tree.root_->copy();
     size_ = tree.size_;
 
     return *this;
@@ -288,38 +300,19 @@ void BinarySearchTree<T>::symmetric(Node * node, std::ostream & out) const
     if (!node)
         return;
 
-    symmetric(node->left_, out);
-    out << node->value_ << "  ";
     symmetric(node->right_, out);
-}
-
-template<typename T>
-auto BinarySearchTree<T>::copyTree(Node * node) -> Node *
-{
-    auto newNode = new Node(node->value_);
-
-    if (node->left_)
-        newNode->left_ = copyTree(node->left_);
-
-    if (node->right_)
-        newNode->right_ = copyTree(node->right_);
-
-    return newNode;
+    out << node->value_ << "  ";
+    symmetric(node->left_, out);
 }
 
 template<typename T>
 auto BinarySearchTree<T>::equal(Node *firstNode, Node *secondNode) const -> bool
 {
     if (firstNode)
-    {
-        if (secondNode && firstNode->value_ == secondNode->value_
-            && equal(firstNode->left_, secondNode->left_) && equal(firstNode->right_, secondNode->right_))
-            return true;
-    }
-    else if (!secondNode)
-        return true;
-
-    return false;
+        return secondNode && firstNode->value_ == secondNode->value_
+            && equal(firstNode->left_, secondNode->left_) && equal(firstNode->right_, secondNode->right_);
+    else
+        return !secondNode;
 }
 
 #endif //BINARYSEARCHTREE_BINARYSEARCHTREE_H
