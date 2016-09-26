@@ -38,6 +38,7 @@ int main()
 
     BinarySearchTree<char> fifthTree;
     std::cin >> fifthTree;
+    std::cout << fifthTree;
 
     if (firstTree == fifthTree)
         std::cout << "firstTree is equal to fifthTree" << std::endl;

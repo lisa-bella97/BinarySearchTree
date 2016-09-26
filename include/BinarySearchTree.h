@@ -221,9 +221,16 @@ auto operator >> (std::istream& in, BinarySearchTree<T>& tree) -> std::istream&
     if (tree.root_)
         delete tree.root_;
 
-    size_t size;
+    size_t size = 0;
     std::cout << "size = ";
-    in >> size;
+
+    while (!(in >> size))
+    {
+        in.clear();
+        in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "size = ";
+    }
+
     T value;
 
     for (auto i = 0; i < size; i++)
