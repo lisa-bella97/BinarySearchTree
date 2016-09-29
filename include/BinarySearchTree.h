@@ -43,6 +43,7 @@ public:
 private:
     struct Node
     {
+        Node() : left_(nullptr), right_(nullptr) {}
         Node(T value) : value_(value), left_(nullptr), right_(nullptr) {}
 
         ~Node()
@@ -54,17 +55,34 @@ private:
                 delete right_;
         }
 
-        auto copy() -> Node *
+        void copy(Node * node) const
         {
-            auto newNode = new Node(value_);
+            if (value_ != node->value_)
+                node->value_ = value_;
 
             if (left_)
-                newNode->left_ = left_->copy();
+            {
+                if (!node->left_)
+                {
+                    node->left_ = new Node(left_->value_);
+                    left_->copy(node->left_);
+                }
+            }
+            else if (node->left_)
+                delete node->left_;
 
             if (right_)
-                newNode->right_ = right_->copy();
+            {
+                if (!node->right_)
+                {
+                    node->right_ = new Node(right_->value_);
+                    right_->copy(node->right_);
+                }
+            }
+            else if (node->right_)
+                delete node->right_;
 
-            return newNode;
+            return;
         }
 
         T value_;
@@ -82,11 +100,7 @@ private:
 };
 
 template<typename T>
-BinarySearchTree<T>::BinarySearchTree()
-{
-    root_ = nullptr;
-    size_ = 0;
-}
+BinarySearchTree<T>::BinarySearchTree() : root_(nullptr), size_(0) {}
 
 template<typename T>
 BinarySearchTree<T>::BinarySearchTree(const std::initializer_list<T>& list) : BinarySearchTree()
@@ -98,7 +112,13 @@ BinarySearchTree<T>::BinarySearchTree(const std::initializer_list<T>& list) : Bi
 template<typename T>
 BinarySearchTree<T>::BinarySearchTree(const BinarySearchTree<T>& tree) : size_(tree.size_)
 {
-    root_ = tree.root_->copy();
+    if (tree.root_)
+    {
+        root_ = new Node;
+        tree.root_->copy(root_);
+    }
+    else
+        root_ = nullptr;
 }
 
 template<typename T>
@@ -184,8 +204,17 @@ auto BinarySearchTree<T>::operator = (const BinarySearchTree<T>& tree) -> Binary
     if (this == &tree)
         return *this;
 
-    delete root_;
-    root_ = tree.root_->copy();
+    if (tree.root_)
+    {
+        root_ = new Node;
+        tree.root_->copy(root_);
+    }
+    else
+    {
+        delete root_;
+        root_ = nullptr;
+    }
+
     size_ = tree.size_;
 
     return *this;

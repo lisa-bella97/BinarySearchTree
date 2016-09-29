@@ -29,7 +29,7 @@ int main()
     BinarySearchTree<char> thirdTree(firstTree);
     std::cout << thirdTree << std::endl;
 
-    BinarySearchTree<double> fourthTree(std::move(secondTree));
+    BinarySearchTree<double> fourthTree = std::move(secondTree);
     std::cout << fourthTree << std::endl;
     std::cout << secondTree << std::endl;
 
@@ -38,10 +38,16 @@ int main()
 
     BinarySearchTree<char> fifthTree;
     std::cin >> fifthTree;
-    std::cout << fifthTree;
 
     if (firstTree == fifthTree)
         std::cout << "firstTree is equal to fifthTree" << std::endl;
+    else
+        fifthTree = firstTree;
+
+    BinarySearchTree<char> test;
+    fifthTree = test;
+    std::cout << fifthTree << std::endl;
+
 
 	return 0;
 }
