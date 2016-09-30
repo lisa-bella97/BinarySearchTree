@@ -63,7 +63,9 @@ private:
             if (left_)
             {
                 if (!node->left_)
-                    node->left_ = new Node(left_->value_);  
+                    node->left_ = new Node(left_->value_);
+
+                left_->copy(node->left_);
             }
             else if (node->left_)
                 delete node->left_;
@@ -72,15 +74,11 @@ private:
             {
                 if (!node->right_)
                     node->right_ = new Node(right_->value_);
+
+                right_->copy(node->right_);
             }
             else if (node->right_)
                 delete node->right_;
-            
-            if (left_)
-                left_->copy(node->left_);
-            
-            if (right_)
-                right_->copy(node->right_);
 
             return;
         }

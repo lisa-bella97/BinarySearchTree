@@ -1,4 +1,7 @@
-SCENARIO("if element is (or not) in tree, insert method must return false (or true)") 
+#include "../include/BinarySearchTree.hpp"
+#include "catch.hpp"
+
+SCENARIO("if element is (or not) in tree, insert method must return false (or true)")
 {
     GIVEN("tree")
     {
@@ -32,7 +35,7 @@ SCENARIO("if inserted value is lesser (or bigger) than the value of root, insert
         }
         WHEN("insert element")
         {
-            tree4.insert(-1);
+            tree4.insert(5);
             THEN("value must be inserted on the right from the root")
             {
                 REQUIRE(tree3 == tree4);

@@ -1,4 +1,4 @@
-#include "../include/BinarySearchTree.h"
+#include "../include/BinarySearchTree.hpp"
 
 int main()
 {
@@ -47,7 +47,6 @@ int main()
     BinarySearchTree<char> test;
     fifthTree = test;
     std::cout << fifthTree << std::endl;
-
 
 	return 0;
 }
