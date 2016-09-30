@@ -14,6 +14,33 @@ SCENARIO("if element is (or not) in tree, insert method must return false (or tr
     }
 }
 
+SCENARIO("if inserted value is lesser (or bigger) than the value of root, inserted value must be inserted on the left (or right) from root") 
+{
+    GIVEN("four trees")
+    {
+        BinarySearchTree<int> tree1{1, 3, -1};
+        BinarySearchTree<int> tree2{1, 3};
+        BinarySearchTree<int> tree3{1, 2, 5};
+        BinarySearchTree<int> tree4{1, 2};
+        WHEN("insert value that is lesser than the root value")
+        {
+            tree2.insert(-1);
+            THEN("value must be inserted on the left from the root")
+            {
+                REQUIRE(tree1 == tree2);
+            }
+        }
+        WHEN("insert element")
+        {
+            tree4.insert(-1);
+            THEN("value must be inserted on the right from the root")
+            {
+                REQUIRE(tree3 == tree4);
+            }
+        }
+    }
+}
+
 SCENARIO("if element is (or not) in tree, size must increase by one (or not change)") 
 {
     GIVEN("tree, its size")
