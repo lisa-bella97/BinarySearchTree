@@ -1,6 +1,4 @@
-#define CATCH_CONFIG_MAIN
-
-#include <BinarySearchTree.h>
+#include "../include/BinarySearchTree.h"
 #include "catch.h"
 
 SCENARIO("size of empty tree must be equal 0") {
