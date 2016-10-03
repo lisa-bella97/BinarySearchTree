@@ -1,4 +1,4 @@
-#include "../include/BinarySearchTree.hpp"
+#include <BinarySearchTree.hpp>
 #include "catch.hpp"
 
 SCENARIO("if element is (or not) in tree, insert method must return false (or true)")

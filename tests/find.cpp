@@ -1,4 +1,4 @@
-#include "../include/BinarySearchTree.hpp"
+#include <BinarySearchTree.hpp>
 #include "catch.hpp"
 
 SCENARIO("if element is in tree, find method must return it's pointer")
