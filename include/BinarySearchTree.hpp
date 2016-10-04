@@ -30,7 +30,7 @@ public:
 
     auto size() const noexcept -> size_t;
     auto insert(const T& value) noexcept -> bool;
-    auto find(const T& value) const noexcept -> std::shared_ptr<T>;
+    auto find(const T& value) const noexcept -> const std::shared_ptr<T>;
     auto remove(const T& value) noexcept -> bool;
 
     auto operator = (const BinarySearchTree& tree) -> BinarySearchTree&;
@@ -174,7 +174,7 @@ auto BinarySearchTree<T>::insert(const T& value) noexcept -> bool
 }
 
 template<typename T>
-auto BinarySearchTree<T>::find(const T& value) const noexcept -> std::shared_ptr<T>
+auto BinarySearchTree<T>::find(const T& value) const noexcept -> const std::shared_ptr<T>
 {
     auto node = root_;
 
@@ -362,12 +362,12 @@ auto BinarySearchTree<T>::remove_r(const T& value, std::shared_ptr<Node>& node) 
     {
         if (!node->left_)
         {
-            std::shared_ptr<Node> old = node;
+            auto old = node;
             node = old->right_;
         }
         else if (!node->right_)
         {
-            std::shared_ptr<Node> old = node;
+            auto old = node;
             node = old->left_;
         }
         else
