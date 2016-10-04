@@ -44,9 +44,11 @@ int main()
     else
         fifthTree = firstTree;
 
-    BinarySearchTree<char> test;
-    fifthTree = test;
-    std::cout << fifthTree << std::endl;
+    BinarySearchTree<short> sixthTree{7, -5, 10, 2, 5, 4, 6};
+    std::cout << sixthTree << std::endl;
+
+    if (sixthTree.remove(5))
+        std::cout << sixthTree << std::endl;
 
 	return 0;
 }
