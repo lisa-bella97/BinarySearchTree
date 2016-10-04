@@ -379,10 +379,10 @@ auto BinarySearchTree<T>::remove_r(const T& value, std::shared_ptr<Node>& node) 
 
             node->value_ = min->value_;
             remove_r(min->value_, node->right_);
-        }
-
-        return true;
+        }   
     }
+    
+    return true;
 }
 
 #endif //BINARYSEARCHTREE_BINARYSEARCHTREE_HPP
