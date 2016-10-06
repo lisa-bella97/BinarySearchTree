@@ -350,7 +350,7 @@ auto BinarySearchTree<T>::equal(const std::shared_ptr<Node>& firstNode, const st
 
 template<typename T>
 auto BinarySearchTree<T>::remove_r(const T& value, std::shared_ptr<Node>& node) noexcept -> bool
-{
+{ 
     if (!node)
         return false;
 
@@ -361,24 +361,22 @@ auto BinarySearchTree<T>::remove_r(const T& value, std::shared_ptr<Node>& node) 
     else
     {
         if (!node->left_)
-        {
-            auto old = node;
-            node = old->right_;
-        }
+            node = node->right_;
         else if (!node->right_)
-        {
-            auto old = node;
-            node = old->left_;
-        }
+            node = node->left_;
         else
         {
-            auto min = node->right_;
+			auto min = node->right_;
+			auto parent = node;
 
-            while (min->left_)
-                min = min->left_;
+			while (min->left_)
+			{
+				parent = min;
+				min = min->left_;
+			}
 
             node->value_ = min->value_;
-            remove_r(min->value_, node->right_);
+			parent->left_ = nullptr;
         }   
     }
     
