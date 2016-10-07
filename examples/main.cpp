@@ -5,13 +5,13 @@ int main()
 	BinarySearchTree<char> firstTree{ 'a', 'b', 'z', 'g' };
 	std::cout << firstTree << std::endl;
 
-	std::ofstream ofs("D:\\Tree.txt");
+	std::ofstream ofs("/home/elizaveta/ClionProjects/BinarySearchTree/examples/Tree.txt");
 	ofs << firstTree;
 	ofs.close();
 
 	BinarySearchTree<double> secondTree;
 
-	std::ifstream ifs("D:\\BinTree.txt");
+	std::ifstream ifs("/home/elizaveta/ClionProjects/BinarySearchTree/examples/BinTree.txt");
 	ifs >> secondTree;
 	ifs.close();
 
