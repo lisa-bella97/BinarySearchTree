@@ -355,9 +355,9 @@ auto BinarySearchTree<T>::remove_r(const T& value, std::shared_ptr<Node>& node) 
         return false;
 
     if (value < node->value_)
-        remove_r(value, node->left_);
+        return remove_r(value, node->left_);
     else if (value > node->value_)
-        remove_r(value, node->right_);
+        return remove_r(value, node->right_);
     else
     {
         if (!node->left_)
@@ -376,12 +376,20 @@ auto BinarySearchTree<T>::remove_r(const T& value, std::shared_ptr<Node>& node) 
             }
 
             node->value_ = min->value_;
-            parent->right_ = min->right_;
-            min = nullptr;
+
+            if (min->right_)
+                parent->right_ = min->right_;
+            else
+            {
+                if (min == parent->left_)
+                    parent->left_ = nullptr;
+                else if (min == parent->right_)
+                    parent->right_ = nullptr;
+            }
+
+            return true;
         }
     }
-
-    return true;
 }
 
 #endif //BINARYSEARCHTREE_BINARYSEARCHTREE_HPP
