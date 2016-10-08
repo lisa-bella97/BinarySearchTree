@@ -386,9 +386,9 @@ auto BinarySearchTree<T>::remove_r(const T& value, std::shared_ptr<Node>& node) 
                 else if (min == parent->right_)
                     parent->right_ = nullptr;
             }
-
-            return true;
         }
+        
+        return true;
     }
 }
 
