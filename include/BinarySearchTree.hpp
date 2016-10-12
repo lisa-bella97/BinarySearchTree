@@ -377,18 +377,13 @@ auto BinarySearchTree<T>::remove_r(const T& value, std::shared_ptr<Node>& node) 
 
             node->value_ = min->value_;
 
-            if (min->right_)
+            if (min == parent->left_)
+                parent->left_ = min->right_;
+            else if (min == parent->right_)
                 parent->right_ = min->right_;
-            else
-            {
-                if (min == parent->left_)
-                    parent->left_ = nullptr;
-                else if (min == parent->right_)
-                    parent->right_ = nullptr;
-            }
-
-            return true;
         }
+
+        return true;
     }
 }
 

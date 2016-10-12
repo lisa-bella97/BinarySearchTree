@@ -62,8 +62,8 @@ SCENARIO("after removing element from the tree it's structure must be changed")
                 REQUIRE(tree1 == tree2);
             }
         }
-        tree1 = BinarySearchTree<int>({ 8, 3, 10, 1, 6, 4, 7, 14, 13 });
-        tree2 = BinarySearchTree<int>({ 10, 3, 1, 6, 4, 7, 14, 13 });
+        tree1 = BinarySearchTree<int>({8});
+        tree2 = BinarySearchTree<int>();
         WHEN("remove root")
         {
             tree1.remove(8);
