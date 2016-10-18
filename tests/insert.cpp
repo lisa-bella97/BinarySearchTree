@@ -1,7 +1,7 @@
 #include <BinarySearchTree.hpp>
 #include "catch.hpp"
 
-SCENARIO("if element is (or not) in tree, insert method must return false (or true)")
+SCENARIO("if element is already in tree, insert method must throw an exception")
 {
     GIVEN("tree")
     {
@@ -10,8 +10,7 @@ SCENARIO("if element is (or not) in tree, insert method must return false (or tr
         {
             THEN("sizes must be equal")
             {
-                REQUIRE(!tree.insert(1));
-                REQUIRE(tree.insert(0));
+                REQUIRE_THROWS_AS(tree.insert(3), logical_error<int>&);
             }
         }
     }
@@ -44,7 +43,7 @@ SCENARIO("if inserted value is lesser (or bigger) than the value of root, insert
     }
 }
 
-SCENARIO("if element is (or not) in tree, size must increase by one (or not change)") 
+SCENARIO("if element is in tree, size must increase by one")
 {
     GIVEN("tree, its size")
     {
@@ -56,14 +55,6 @@ SCENARIO("if element is (or not) in tree, size must increase by one (or not chan
             THEN("sizes must increase by one")
             {
                 REQUIRE(tree.size() == size + 1);
-            }
-        }
-        WHEN("insert element that is in the tree")
-        {
-            tree.insert(3);
-            THEN("sizes must be equal")
-            {
-                REQUIRE(tree.size() == size);
             }
         }
     }

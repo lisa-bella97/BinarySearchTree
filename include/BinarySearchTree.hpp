@@ -9,6 +9,7 @@
 #include <fstream>
 #include <limits>
 #include <memory>
+#include <logical_error.hpp>
 
 template <typename T>
 class BinarySearchTree;
@@ -29,9 +30,9 @@ public:
     ~BinarySearchTree();
 
     auto size() const noexcept -> size_t;
-    auto insert(const T& value) noexcept -> bool;
-    auto find(const T& value) const noexcept -> const std::shared_ptr<T>;
-    auto remove(const T& value) noexcept -> bool;
+    auto insert(const T& value) -> void;
+    auto find(const T& value) const -> const T&;
+    auto remove(const T& value) -> void;
 
     auto operator = (const BinarySearchTree& tree) -> BinarySearchTree&;
     auto operator = (BinarySearchTree&& tree) -> BinarySearchTree&;
@@ -54,7 +55,7 @@ private:
             right_ = nullptr;
         }
 
-        void copy(std::shared_ptr<Node>& node) const noexcept
+        auto copy(std::shared_ptr<Node>& node) const noexcept -> void
         {
             if (value_ != node->value_)
                 node->value_ = value_;
@@ -88,11 +89,11 @@ private:
     std::shared_ptr<Node> root_;
     size_t size_;
 
-    void direct(const std::shared_ptr<Node>& root, std::ostream & out) const noexcept;
-    void reverse(const std::shared_ptr<Node>& root, std::ostream & out) const noexcept;
-    void symmetric(const std::shared_ptr<Node>& root, std::ostream & out) const noexcept;
+    auto direct(const std::shared_ptr<Node>& root, std::ostream& out) const noexcept -> void;
+    auto reverse(const std::shared_ptr<Node>& root, std::ostream& out) const noexcept -> void;
+    auto symmetric(const std::shared_ptr<Node>& root, std::ostream& out) const noexcept -> void;
     auto equal(const std::shared_ptr<Node>& firstNode, const std::shared_ptr<Node>& secondTree) const noexcept -> bool;
-    auto remove_r(const T& value, std::shared_ptr<Node>& node) noexcept -> bool;
+    auto remove_r(const T& value, std::shared_ptr<Node>& node) -> void;
 };
 
 template<typename T>
@@ -140,13 +141,13 @@ auto BinarySearchTree<T>::size() const noexcept -> size_t
 }
 
 template<typename T>
-auto BinarySearchTree<T>::insert(const T& value) noexcept -> bool
+auto BinarySearchTree<T>::insert(const T& value) -> void
 {
     if (!root_)
     {
         root_ = std::make_shared<Node>(value);
         size_++;
-        return true;
+        return;
     }
 
     std::shared_ptr<Node> node = root_, parent = nullptr;
@@ -160,7 +161,7 @@ auto BinarySearchTree<T>::insert(const T& value) noexcept -> bool
         else if (value > parent->value_)
             node = parent->right_;
         else
-            return false;
+            throw logical_error<T>("Value is already in the tree", value);
     }
 
     if (value < parent->value_)
@@ -169,12 +170,10 @@ auto BinarySearchTree<T>::insert(const T& value) noexcept -> bool
         parent->right_ = std::make_shared<Node>(value);
 
     size_++;
-
-    return true;
 }
 
 template<typename T>
-auto BinarySearchTree<T>::find(const T& value) const noexcept -> const std::shared_ptr<T>
+auto BinarySearchTree<T>::find(const T& value) const -> const T&
 {
     auto node = root_;
 
@@ -185,22 +184,17 @@ auto BinarySearchTree<T>::find(const T& value) const noexcept -> const std::shar
         else if (value > node->value_)
             node = node->right_;
         else
-            return std::make_shared<T>(node->value_);
+            return node->value_;
     }
 
-    return nullptr;
+    throw logical_error<T>("Can't find value in the tree", value);
 }
 
 template<typename T>
-auto BinarySearchTree<T>::remove(const T& value) noexcept -> bool
+auto BinarySearchTree<T>::remove(const T& value) -> void
 {
-    if (remove_r(value, root_))
-    {
-        size_--;
-        return true;
-    }
-
-    return false;
+    remove_r(value, root_);
+    size_--;
 }
 
 template<typename T>
@@ -306,7 +300,7 @@ auto operator << (std::ofstream& out, const BinarySearchTree<T>& tree) -> std::o
 }
 
 template<typename T>
-void BinarySearchTree<T>::direct(const std::shared_ptr<Node>& node, std::ostream & out) const noexcept
+auto BinarySearchTree<T>::direct(const std::shared_ptr<Node>& node, std::ostream & out) const noexcept -> void
 {
     if (!node)
         return;
@@ -317,7 +311,7 @@ void BinarySearchTree<T>::direct(const std::shared_ptr<Node>& node, std::ostream
 }
 
 template<typename T>
-void BinarySearchTree<T>::reverse(const std::shared_ptr<Node>& node, std::ostream & out) const noexcept
+auto BinarySearchTree<T>::reverse(const std::shared_ptr<Node>& node, std::ostream & out) const noexcept -> void
 {
     if (!node)
         return;
@@ -328,7 +322,7 @@ void BinarySearchTree<T>::reverse(const std::shared_ptr<Node>& node, std::ostrea
 }
 
 template<typename T>
-void BinarySearchTree<T>::symmetric(const std::shared_ptr<Node>& node, std::ostream & out) const noexcept
+auto BinarySearchTree<T>::symmetric(const std::shared_ptr<Node>& node, std::ostream & out) const noexcept -> void
 {
     if (!node)
         return;
@@ -349,15 +343,15 @@ auto BinarySearchTree<T>::equal(const std::shared_ptr<Node>& firstNode, const st
 }
 
 template<typename T>
-auto BinarySearchTree<T>::remove_r(const T& value, std::shared_ptr<Node>& node) noexcept -> bool
+auto BinarySearchTree<T>::remove_r(const T& value, std::shared_ptr<Node>& node) -> void
 {
     if (!node)
-        return false;
+        throw logical_error<T>("Can't remove value in the tree", value);
 
     if (value < node->value_)
-        return remove_r(value, node->left_);
+        remove_r(value, node->left_);
     else if (value > node->value_)
-        return remove_r(value, node->right_);
+        remove_r(value, node->right_);
     else
     {
         if (!node->left_)
@@ -382,8 +376,6 @@ auto BinarySearchTree<T>::remove_r(const T& value, std::shared_ptr<Node>& node) 
             else if (min == parent->right_)
                 parent->right_ = min->right_;
         }
-
-        return true;
     }
 }
 

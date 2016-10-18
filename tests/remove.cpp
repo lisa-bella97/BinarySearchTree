@@ -76,10 +76,9 @@ SCENARIO("after removing element from the tree it's structure must be changed")
         tree2 = BinarySearchTree<int>({ 8, 3, 10, 1, 6, 4, 7, 14, 13 });
         WHEN("remove node that doesn't exist")
         {
-            tree1.remove(-1);
-            THEN("trees must be equal")
+            THEN("an exception must be thrown")
             {
-                REQUIRE(tree1 == tree2);
+                REQUIRE_THROWS_AS(tree1.remove(-1), logical_error<int>&);
             }
         }
     }

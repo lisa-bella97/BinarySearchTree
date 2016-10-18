@@ -1,7 +1,7 @@
 #include <BinarySearchTree.hpp>
 #include "catch.hpp"
 
-SCENARIO("if element is in tree, find method must return it's pointer")
+SCENARIO("if element is in tree, find method must return it's reference")
 {
     GIVEN("tree")
     {
@@ -10,13 +10,13 @@ SCENARIO("if element is in tree, find method must return it's pointer")
         {
             THEN("return pointer to element must not be nullptr")
             {
-                REQUIRE(*(tree.find(4)) == 4);
+                REQUIRE(tree.find(4) == 4);
             }
         }
     }
 }
 
-SCENARIO("if element is not in tree, find method must return nullptr") 
+SCENARIO("if element is not in tree, find method must throw exception")
 {
     GIVEN("tree") 
     {
@@ -25,7 +25,7 @@ SCENARIO("if element is not in tree, find method must return nullptr")
         {
             THEN("return pointer to element must be nullptr") 
             {
-                REQUIRE(tree.find(2) == nullptr);
+                REQUIRE_THROWS_AS(tree.find(2), logical_error<int>&);
             }
         }
     }
